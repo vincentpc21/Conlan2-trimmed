@@ -30,15 +30,16 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.firstinspires.ftc.teamcode;
-
+package club.towr5291.training;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+
+import club.towr5291.functions.TOWR5291Toggle;
 
 
 /**
@@ -60,62 +61,23 @@ import com.qualcomm.robotcore.util.Range;
  */
 //@Disabled
 @TeleOp(name = "Conmanbot: Old OpMode", group = "ElektraKatz")
-public class chouston2 extends LinearOpMode {
+public class chouston3_trimmed extends LinearOpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
-    DcMotor leftMotor1 = null;
-    DcMotor relicMotor = null;
-    DcMotor clawMotor = null;
-    DcMotor rightMotor1 = null;
-    DcMotor leftMotor2 = null;
-    DcMotor rightMotor2 = null;
-    DcMotor upMotor = null;
-    DcMotor slideMotor = null;
-    public Servo leftClaw = null;
-    public Servo relicClaw22 = null;
-    public Servo rightClaw = null;
-    public Servo relicClaw = null;
-    public Servo jewelArm = null;
-    //DigitalChannel liftLower;  // Hardware Device Object
+    public DcMotor leftMotor1 = null;
+    public DcMotor rightMotor1 = null;
+    public DcMotor leftMotor2 = null;
+    public DcMotor rightMotor2 = null;
+    // TODO: uncomment these when arm is added
+    public DcMotor LanderMotor1 = null;
+    //public DcMotor LanderArm2 = null;
+    //public Servo landerClaw = null;
+   /* public Servo ElementClaw = null;
 
+    static double LANDER_CLAW_CLOSE = 1;
 
-    //    public Servo    frontClaw   = null;
-    static double LEFT_CLAW_OPEN = .6;
-    static double LEFT_CLAW_PARK = 1;
-    static double RIGHT_CLAW_OPEN = .6;
-    static double LEFT_CLAW_CLOSE = .8;
-    static double RIGHT_CLAW_CLOSE = .3;
-    static double RIGHT_CLAW_PARK = 0;
-    static double JEWEL_ARM_UP = .3;
-    static double JEWEL_ARM_DOWN = .7;
-   // static double FULL = 1;
-
-    static double RELIC_CLAW_CLOSE = .75;
-    static double RELIC_CLAW_OPEN = .5;
-
-
-    // static double CLAW_MID = 0.2;
-   // boolean oneShot = false;
-   double dblLeftX = 0;
-    double dblLeftY = 0;
-    double dblRightX = 0;
-    double dblRawLeftMotor1;
-    double dblRawLeftMotor2;
-    double dblRawRightMotor1;
-    double dblRawRightMotor2;
-    double dblLeftMotor1Power;
-    double dblLeftMotor2Power;
-    double dblRightMotor1Power;
-    double dblRightMotor2Power;
-    boolean oneShotb = false;
-    //    boolean         oneShotc     = false;
-    boolean oneShotd = false;
-    boolean oneShot = false;
-    boolean oneShotY = false;
-    boolean         oneShotx     = false;
-//    boolean         oneShotd3     = false;
-//    boolean         oneShotd4     = false;
+*/
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -126,20 +88,20 @@ public class chouston2 extends LinearOpMode {
          * to 'get' must correspond to the names assigned during the robot configuration
          * st   ep (using the FTC Robot Controller app on the phone).
          */
-        leftMotor1 = hardwareMap.dcMotor.get("left motor1");
-        clawMotor = hardwareMap.dcMotor.get("claw motor");
-        leftMotor2 = hardwareMap.dcMotor.get("left motor2");
-        rightMotor1 = hardwareMap.dcMotor.get("right motor1");
-        rightMotor2 = hardwareMap.dcMotor.get("right motor2");
-        upMotor = hardwareMap.dcMotor.get("up motor");
-        relicMotor = hardwareMap.dcMotor.get("relic motor");
-        //slideMotor = hardwareMap.dcMotor.get("slide motor");
-        leftClaw = hardwareMap.servo.get("left claw");
-        rightClaw = hardwareMap.servo.get("right claw");
-        relicClaw = hardwareMap.servo.get("relic claw");
-        jewelArm     = hardwareMap.servo.get("jewel arm");
+        //Test
+        //things like FLM means front left motor
+        leftMotor1 = hardwareMap.get(DcMotor.class, "leftMotor1");
+        rightMotor1 = hardwareMap.get(DcMotor.class, "rightMotor1");
+        leftMotor2 = hardwareMap.get(DcMotor.class, "leftMotor2");
+        rightMotor2 = hardwareMap.get(DcMotor.class, "rightMotor2");
+        LanderMotor1 = hardwareMap.get(DcMotor.class, "LanderArm1");
+        // TODO: uncomment these when arm is added
+        //LanderArm1 = hardwareMap.get(DcMotor.class, "LanderArm1");
+        //LanderArm2 = hardwareMap.get(DcMotor.class, "LanderArm2");
+        //landerClaw = hardwareMap.servo.get("LanderServo1");
+
         // get a reference to our digitalTouch object.
-       // liftLower = hardwareMap.get(DigitalChannel.class, "lift lower");
+        // liftLower = hardwareMap.get(DigitalChannel.class, "lift lower");
 
 
 //        beaconHit   = hardwareMap.servo.get("actuator2");
@@ -149,16 +111,54 @@ public class chouston2 extends LinearOpMode {
         // "Reverse" the motor that runs backwards when connected directly to the battery
         leftMotor1.setDirection(DcMotor.Direction.FORWARD);
         leftMotor2.setDirection(DcMotor.Direction.FORWARD);// Set to REVERSE if using AndyMark motors
-        upMotor.setDirection(DcMotor.Direction.FORWARD);
         rightMotor1.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
         rightMotor2.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
-        relicMotor.setDirection(DcMotor.Direction.FORWARD);
-        leftClaw.setPosition(LEFT_CLAW_PARK);//Initiate left claw to 0 position
-        rightClaw.setPosition(RIGHT_CLAW_PARK);
-        relicClaw.setPosition(RELIC_CLAW_CLOSE);
-        jewelArm.setPosition(JEWEL_ARM_UP);
+        LanderMotor1.setDirection(DcMotor.Direction.FORWARD);
+
+        /*//right strafe
+        leftMotor1.setDirection(DcMotor.Direction.FORWARD);
+        leftMotor2.setDirection(DcMotor.Direction.REVERSE);// Set to REVERSE if using AndyMark motors
+        rightMotor1.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+        rightMotor2.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
+
+        //left strafe
+        leftMotor1.setDirection(DcMotor.Direction.REVERSE);
+        leftMotor2.setDirection(DcMotor.Direction.FORWARD);// Set to REVERSE if using AndyMark motors
+        rightMotor1.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
+        rightMotor2.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+
+        //forward
+        leftMotor1.setDirection(DcMotor.Direction.FORWARD);
+        leftMotor2.setDirection(DcMotor.Direction.FORWARD);// Set to REVERSE if using AndyMark motors
+        rightMotor1.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
+        rightMotor2.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
+
+        //reverse
+        leftMotor1.setDirection(DcMotor.Direction.REVERSE);
+        leftMotor2.setDirection(DcMotor.Direction.REVERSE);// Set to REVERSE if using AndyMark motors
+        rightMotor1.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+        rightMotor2.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+        */
+
+        // TODO: uncomment these when arm is added
+        //LanderArm1.setDirection(DcMotor.Direction.FORWARD);
+        //LanderArm2.setDirection(DcMotor.Direction.REVERSE);
+
+
         // set the digital channel to input.
-       // liftLower.setMode(DigitalChannel.Mode.INPUT);
+        // liftLower.setMode(DigitalChannel.Mode.INPUT);
+
+        double left = 0;
+        double right = 0;
+        double max = 0;
+        double leftDrive = 0;
+        double rightDrive = 0;
+        double velocity = 0;
+        double turn = 0;
+
+
+        TOWR5291Toggle toggleButton = new TOWR5291Toggle(gamepad1.a);
+        toggleButton.setDebounce(250);
 
 //        upMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         waitForStart();
@@ -185,36 +185,29 @@ public class chouston2 extends LinearOpMode {
 //            upMotor.setPower(0);
 //            upMotor.setPower(gamepad2.left_stick_y);
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            dblLeftY = gamepad1.left_stick_y;
-            dblLeftX = gamepad1.left_stick_x;
-            dblRightX = gamepad1.right_stick_x;
+            if (toggleButton.toggleState(gamepad1.a)) {
+                left = gamepad1.right_stick_x;//(-gamepad1.left_stick_y + gamepad1.right_stick_x);
+                right = -gamepad1.right_stick_x;//(gamepad1.left_stick_y + -gamepad1.right_stick_x);
 
-            dblRawLeftMotor1 = -dblLeftY + dblLeftX + dblRightX;
-            dblRawLeftMotor2 = -dblLeftY - dblLeftX + dblRightX;
-            dblRawRightMotor1 = -dblLeftY - dblLeftX - dblRightX;
-            dblRawRightMotor2 = -dblLeftY + dblLeftX - dblRightX;
+                /*if (toggleButton.toggleState(gamepad2.b)) {
+                    left =
+                }*/
 
-            dblLeftMotor1Power = Range.clip(dblRawLeftMotor1, -.70, .70);
-            dblLeftMotor2Power = Range.clip(dblRawLeftMotor2, -.875, .875);
-            dblRightMotor1Power = Range.clip(dblRawRightMotor1, -1.0, 1.0);
-            dblRightMotor2Power = Range.clip(dblRawRightMotor2, -.70, .70);
+                //turn = gamepad1.right_stick_x;
+                //velocity = -gamepad1.left_stick_y;
+
+                //leftDrive = Range.clip(velocity - turn, -1.0, 1.0);
+                //rightDrive = Range.clip(velocity + turn, -1.0, 1.0);
+
+                //leftMotor1.setPower(leftDrive);
+                //leftMotor2.setPower(leftDrive);
+                //rightMotor1.setPower(rightDrive);
+                //rightMotor2.setPower(rightDrive);
 
 
+                //Left
 
-            telemetry.addData("Mode", "running");
-            telemetry.addData("stick", " LY=" + dblLeftY + " LX=" + dblLeftX + " RX=" + dblRightX);
-            telemetry.addData("raw", " L1=" + dblRawLeftMotor1 + " L2=" + dblRawLeftMotor2 + " R1=" + dblRawRightMotor1 + " R2=" + dblRawRightMotor2);
-            telemetry.addData("power", " L1=" + dblLeftMotor1Power + " L2=" + dblLeftMotor2Power + " R1=" + dblRightMotor1Power + " R2=" + dblRawRightMotor2);
-            telemetry.update();
-
-            leftMotor1.setPower(dblLeftMotor1Power);
-            leftMotor2.setPower(dblLeftMotor2Power);
-            rightMotor1.setPower(dblRightMotor1Power);
-            rightMotor2.setPower(dblRightMotor2Power);
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
-            //Left
-            /*
-            if (-gamepad1.left_stick_x == 1) {
+            /*if (-gamepad1.left_stick_x == 1) {
                 leftMotor1.setPower(-1);
                 leftMotor2.setPower(1);
                 rightMotor1.setPower(1);
@@ -240,38 +233,101 @@ public class chouston2 extends LinearOpMode {
                 leftMotor2.setPower(-1);
                 rightMotor1.setPower(-1);
                 rightMotor2.setPower(-1);
-            }
-            //turn xx
-            if (-gamepad1.right_stick_x == 1) {
-                leftMotor1.setPower(-1);
-                leftMotor2.setPower(-1);
-                rightMotor1.setPower(1);
-                rightMotor2.setPower(1);
-            }
-            //turn xy
-            else if (gamepad1.right_stick_x == 1) {
-                leftMotor1.setPower(1);
-                leftMotor2.setPower(1);
-                rightMotor1.setPower(-1);
-                rightMotor2.setPower(-1);
-            }
-            //auto  stop
-            if (gamepad1.left_stick_y == 0 && gamepad1.left_stick_x == 0 && gamepad1.right_stick_x == 0) {
-                leftMotor1.setPower(0);
-                leftMotor2.setPower(0);
-                rightMotor1.setPower(0);
-                rightMotor2.setPower(0);
-            }
-             */
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/*
-            if (gamepad2.y) {
+            }*/
 
-                MediaPlayer mediaPlayer = MediaPlayer.create(context, R.raw.lion);
-                mediaPlayer.start();
-            }
-*/
-            // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
+
+                max = Math.max(Math.abs(left), Math.abs(right));
+                /*
+                if (max > 1.0) {
+
+                    // left = left / max;
+                    // left += max;
+                    // left = left + max;
+
+                    right /= max;
+
+
+                }
+                */
+
+                // Clamp the input values to be sure they stay within -1 and 1
+                //left = clamp(-1.0, 1.0, left);
+                //right = clamp(-1.0, 1.0, right);
+
+
+                telemetry.addData("Mode", "running");
+                telemetry.addData("raw", " L1=" + leftMotor1 + " L2=" + leftMotor2 + " R1=" + rightMotor1 + " R2=" + rightMotor2);
+                telemetry.addData("power", " L1=" + leftMotor1 + " L2=" + leftMotor2 + " R1=" + rightMotor1 + " R2=" + rightMotor2);
+                telemetry.update();
+
+                leftMotor1.setPower(left);
+                leftMotor2.setPower(left);
+                rightMotor1.setPower(right);
+                rightMotor2.setPower(right);
+
+                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
+                //Left
+                if (-gamepad1.left_stick_x == 1) {
+                    leftMotor1.setPower(1.0);
+                    leftMotor2.setPower(-1.0);
+                    rightMotor1.setPower(-1.0);
+                    rightMotor2.setPower(1.0);
+                }
+                //right
+                else if (gamepad1.left_stick_x == 1) {
+                    leftMotor1.setPower(-1.0);
+                    leftMotor2.setPower(1.0);
+                    rightMotor1.setPower(1.0);
+                    rightMotor2.setPower(-1.0);
+                }
+                //forward
+                else if (-gamepad1.left_stick_y == 1) {
+                    leftMotor1.setPower(1.0);
+                    leftMotor2.setPower(1.0);
+                    rightMotor1.setPower(1.0);
+                    rightMotor2.setPower(1.0);
+                }
+                //backward
+                else if (gamepad1.left_stick_y == 1) {
+                    leftMotor1.setPower(-1.0);
+                    leftMotor2.setPower(-1.0);
+                    rightMotor1.setPower(-1.0);
+                    rightMotor2.setPower(-1.0);
+                }
+                if (-gamepad2.left_stick_y == 1) {
+                    LanderMotor1.setPower(1.0);
+                } else if (gamepad2.left_stick_y == 1) {
+                    LanderMotor1.setPower(-1.0);
+                }
+
+
+                //TODO: marker, delete when done.
+                /*
+                 //auto  stop
+                 if (gamepad1.left_stick_y == 0 && gamepad1.left_stick_x == 0 && gamepad1.right_stick_x == 0) {
+                 leftMotor1.setPower(0.0);
+                 leftMotor2.setPower(0.0);
+                 rightMotor1.setPower(0.0);
+                 rightMotor2.setPower(0.0);
+                 }
+                 */
+
+                if (gamepad1.dpad_down) {
+                    // TODO: uncomment these when arm is added
+                    //LanderArm1.setPower(.5);
+                } else if (gamepad1.dpad_up) {
+                    // TODO: uncomment these when arm is added
+                    //LanderArm1.setPower(-.5);
+                }
+                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/*
+ if (gamepad2.y) {
+
+ MediaPlayer mediaPlayer = MediaPlayer.create(context, R.raw.lion);
+ mediaPlayer.start();
+ }
+ */
+                // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
            /* if ((gamepad2.left_stick_y < 0) && (upMotor.getCurrentPosition()<FULL)){
                 upMotor.setPower(-gamepad2.left_stick_y);
             }
@@ -284,397 +340,30 @@ public class chouston2 extends LinearOpMode {
             }
 
            */ //upMotor.setPower(-gamepad2.left_stick_y);
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            relicMotor.setPower(-gamepad2.right_stick_y);
-            upMotor.setPower(-gamepad2.left_stick_y);
+                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-
-            if(gamepad2.dpad_up){
-                clawMotor.setPower(.5);
-            }else if (gamepad2.dpad_down){
-                clawMotor.setPower(-.5);
-            }else {
-                clawMotor.setPower(0);
-            }
-
-
-
-            if (!gamepad2.a) {
-                oneShot = false;
-            }
-
-
-            if (gamepad2.a && !oneShot) {
-
-                oneShot = true;
-//                wait(10);
-                telemetry.addData("Status:", "'gamepad2.right' pressed");
                 telemetry.update();
-
-                if (relicClaw.getPosition() == RELIC_CLAW_OPEN) {
-                    telemetry.addData("Status:", "l claw close");
-                    relicClaw.setPosition(RELIC_CLAW_CLOSE);
-
-                } else if ((relicClaw.getPosition() == RELIC_CLAW_CLOSE)) {
-                    telemetry.addData("Status:", "l claw open");
-                    relicClaw.setPosition(RELIC_CLAW_OPEN);
-
-                }
             }
-
-            if (!gamepad2.y) {
-                oneShotY = false;
-            }
-
-            if (gamepad2.y && !oneShotY) {
-
-                oneShotY = true;
-//                wait(10);
-                telemetry.addData("Status:", "'gamepad2.Y' pressed");
-                telemetry.update();
-
-                if (relicClaw.getPosition() == JEWEL_ARM_DOWN) {
-                    telemetry.addData("Status:", "jewelArm up");
-                    jewelArm.setPosition(JEWEL_ARM_UP);
-
-                } else if ((relicClaw.getPosition() == JEWEL_ARM_UP)) {
-                    telemetry.addData("Status:", "jewArm up");
-                    jewelArm.setPosition(JEWEL_ARM_DOWN);
-
-                }
-
-                sleep(10);
-
-            }
-            telemetry.update();
-
-
-
-            //slideMotor.setPower(gamepad2.right_stick_y);
-            //omg~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/*
-            if (!gamepad2.right_bumper) {
-                oneShotd2 = false;
-            }
-
-
-            if (gamepad2.right_bumper && !oneShotd2) {
-
-                oneShotd2 = true;
-//                wait(10);
-                telemetry.addData("Status:", "'gamepad2.right' pressed");
-                telemetry.update();
-
-                if (rightClaw.getPosition() == RIGHT_CLAW_OPEN) {
-                    telemetry.addData("Status:", "l claw close");
-                    rightClaw.setPosition(RIGHT_CLAW_CLOSE);
-
-                } else if ((rightClaw.getPosition() == RIGHT_CLAW_CLOSE)) {
-                    telemetry.addData("Status:", "l claw open");
-                    rightClaw.setPosition(RIGHT_CLAW_OPEN);
-
-                }
-
-                sleep(10);
-
-            }
-            telemetry.update();
-*/
-
-            if (!gamepad2.left_bumper) {
-                oneShotd = false;
-            }
-
-
-            if (gamepad2.left_bumper && !oneShotd) {
-
-                oneShotd = true;
-//                wait(10);
-                telemetry.addData("Status:", "'gamepad2.right' pressed");
-                telemetry.update();
-
-                if (leftClaw.getPosition() == LEFT_CLAW_OPEN ) {
-                    telemetry.addData("Status:", "l & r claw close");
-                    leftClaw.setPosition(LEFT_CLAW_CLOSE);
-                    rightClaw.setPosition(RIGHT_CLAW_CLOSE);
-
-                } else if ((leftClaw.getPosition() == LEFT_CLAW_CLOSE || leftClaw.getPosition() == LEFT_CLAW_PARK)) {
-                    telemetry.addData("Status:", "l claw open");
-                    leftClaw.setPosition(LEFT_CLAW_OPEN);
-                    rightClaw.setPosition(RIGHT_CLAW_OPEN);
-
-                }
-
-               sleep(10);
-
-            }
-            telemetry.update();
         }
-    }
-}
-                    //DIAGNAL~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                    //NE
-                    //if (gamepad1.left_stick_y == 1 && gamepad1.left_stick_x == 1) {
-                    //  leftMotor1.setPower(1);
-                    //leftMotor2.setPower(0);
-                    //rightMotor1.setPower(0);
-                    //rightMotor2.setPower(1);
-                    //}
-                    //NW
-                    //if (gamepad1.left_stick_y == 1 && gamepad1.left_stick_x == -1) {
-                    //leftMotor1.setPower(0);
-                    //leftMotor2.setPower(1);
-                    //rightMotor1.setPower(1);
-                    //rightMotor2.setPower(0);
-                    //}
-                    //SW
-                    //if (gamepad1.left_stick_y == -1 && gamepad1.left_stick_x == -1) {
-                    //leftMotor1.setPower(-1);
-                    //leftMotor2.setPower(0);
-                    //rightMotor1.setPower(0);
-                    //rightMotor2.setPower(-1);
-                    //}
-                    //SE
-                    //if (gamepad1.left_stick_y == -1 && gamepad1.left_stick_x == 1) {
-                    //leftMotor1.setPower(0);
-                    //leftMotor2.setPower(-1);
-                    //rightMotor1.setPower(-1);
-                    //rightMotor2.setPower(0);
-                    //}
-                    //DIAGNAL~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                    //turn xx
 
 
 
-                    //stop x
-                    //if (gamepad1.left_stick_x == 0) {
-                    //    leftMotor1.setPower(0);
-                    //    leftMotor2.setPower(0);
-                    //    rightMotor1.setPower(0);
-                    //    rightMotor2.setPower(0);
-                    //}
+/*
+    private double clamp(double min, double max, double val) {
 
+        double retVal = val;
 
-// 1~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        if (max < val || val < min) {
+            if (max < val) {
+                retVal = max;
+            }
+            else {
+                retVal = min;
+            }
+        }
 
-//            if (upMotor.getCurrentPosition() < 10000) {
-//                oneShotd = false;
-//            }
-//            telemetry.addData("Path0", "Starting at %7d :%7d",
-//                    upMotor.getCurrentPosition());
-//            upMotor.getCurrentPosition();
-//            telemetry.update();
-//
-//            if (upMotor.getCurrentPosition() < 10000) {
-//                oneShotd = false;
-//            }
-//            sleep(20000);
-//            upMotor.setPower(gamepad1.left_stick_y);
-//            telemetry.update();
-////
-//            if (gamepad1.x && !oneShotd) {
-//
-//                oneShotd = true;
-//                telemetry.addData("Status:", "'gamepad2.x' pressed");
-//
-//                if (upMotor.getCurrentPosition()<) {
-//                    telemetry.addData("Status:", "Close Gripper");
-//                    upMotor.setPower(0);
-//                } else if ((upMotor.getCurrentPosition()>)) {
-//                    telemetry.addData("Status:", "Open Gripper");
-//                    rightMotor1.setPower(-gamepad1.left_stick_y);
-//                }
-//
-////                wait(10);
-//            }
-//            telemetry.update();
+        return retVal;
+    }*/
 
-//2x~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
-
-//            if (!gamepad1.x) {
-//                oneShotd2 = false;
-//            }
-//
-//            if (gamepad1.x && !oneShotd2) {
-//
-//                oneShotd2 = true;
-//                telemetry.addData("Status:", "'gamepad2.x' pressed");
-//
-//                if (rightMotor2.equals(-gamepad1.left_stick_y)) {
-//                    telemetry.addData("Status:", "Close Gripper");
-//                    rightMotor2.setPower(-gamepad1.right_stick_y);
-//                } else if ((rightMotor2.equals(-gamepad1.right_stick_y))) {
-//                    telemetry.addData("Status:", "Open Gripper");
-//                    rightMotor2.setPower(-gamepad1.left_stick_y);
-//                }
-//
-////                wait(10);
-//            }
-//            telemetry.update();
-//
-//
-//            if (!gamepad1.x) {
-//                oneShotd3 = false;
-//            }
-//
-//            if (gamepad1.x && !oneShotd3) {
-//
-//                oneShotd3 = true;
-//                telemetry.addData("Status:", "'gamepad2.x' pressed");
-//
-//                if (leftMotor2.equals(-gamepad1.right_stick_y)) {
-//                    telemetry.addData("Status:", "Close Gripper");
-//                    leftMotor2.setPower(-gamepad1.left_stick_y);
-//                } else if ((leftMotor2.equals(-gamepad1.left_stick_y))) {
-//                    telemetry.addData("Status:", "Open Gripper");
-//                    leftMotor2.setPower(-gamepad1.right_stick_y);
-//                }
-//
-////                wait(10);
-//            }
-//            telemetry.update();
-//
-//            if (!gamepad1.x) {
-//                oneShotd3 = false;
-//            }
-//
-//            if (gamepad1.x && !oneShotd3) {
-//
-//                oneShotd3 = true;
-//                telemetry.addData("Status:", "'gamepad2.x' pressed");
-//
-//                if (leftMotor1.equals(-gamepad1.right_stick_y)) {
-//                    telemetry.addData("Status:", "Close Gripper");
-//                    leftMotor1.setPower(-gamepad1.left_stick_y);
-//                } else if ((leftMotor1.equals(-gamepad1.left_stick_y))) {
-//                    telemetry.addData("Status:", "Open Gripper");
-//                    leftMotor1.setPower(-gamepad1.right_stick_y);
-//                }
-//
-////                wait(10);
-//            }
-//            telemetry.update();
-//
-//3~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-
-//                if (gamepad2.a && !oneShot) {
-//
-//                    oneShot = true;
-//                    telemetry.addData("Status:", "'gamepad2.a' pressed");
-//
-//                    if (leftClaw.getPosition() == CLAW_OPEN) {
-//                        telemetry.addData("Status:", "Close Gripper");
-//                        leftClaw.setPosition(CLAW_CLOSE);
-//                    } else if ((leftClaw.getPosition() == CLAW_CLOSE)) {
-//                        telemetry.addData("Status:", "Open Gripper");
-//                        leftClaw.setPosition(CLAW_OPEN);
-//                    }
-//
-////                wait(10);
-//                }
-//      }
-
-
-//            if (gamepad2.b && !oneShotb) {
-//
-//                oneShotb = true;
-//                telemetry.addData("Status:", "'gamepad2.b' pressed");
-//
-//                if (beaconHit.getPosition() == CLAW_MID) {
-//                    telemetry.addData("Status:", "Beacon Hit Raise");
-//                    beaconHit.setPosition(CLAW_CLOSE);
-//                } else if ((beaconHit.getPosition() == CLAW_CLOSE)) {
-//                    telemetry.addData("Status:", "Hit Beacon");
-//                    beaconHit.setPosition(CLAW_MID);
-//                }
-//
-////                wait(10);
-//            }
-//            telemetry.update();
-//4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-                    //            if (!gamepad1.x) {
-                    //                  oneShotd = false;
-//                }
-
-//                if (gamepad1.x && !oneShotd) {
-//
-                    //                  oneShotd = true;
-//                    telemetry.addData("Status:", "controls have changed");
-
-                    // rightMotor1.setPower(-gamepad1.left_stick_y);
-                    // rightMotor2.setPower(-gamepad1.left_stick_y);
-                    // leftMotor1.setPower(-gamepad1.right_stick_y);
-                    // leftMotor2.setPower(-gamepad1.right_stick_y);
-                    //}
-                    // {
-
-//                wait(10);
-                    //}
-                    // telemetry.update();
-
-//5x~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//
-//            if (!gamepad1.x) {
-//                oneShotd = false;
-//            }
-//
-//            if (gamepad1.b && !oneShotd2) {
-//
-//                oneShotd2 = true;
-//                telemetry.addData("Status:", "controls have changed");
-//
-//                rightMotor1.setPower(gamepad1.left_stick_y);
-//                rightMotor2.setPower(gamepad1.left_stick_y);
-//                leftMotor1.setPower(gamepad1.right_stick_y);
-//                leftMotor2.setPower(gamepad1.right_stick_y);
-//            }
-//            {
-//
-//  //              wait(10);
-//            }
-
-//            telemetry.update();
-//
-//            if (!gamepad1.y) {
-//                oneShotc = false;
-//            }
-//
-
-//            if (gamepad1.y && !oneShotc) {
-//
-//                oneShotc = true;
-//                telemetry.addData("Status:", "'gamepad2.y' pressed");
-//
-//                if (rightClaw.getPosition() == CLAW_OPEN) {
-//                    telemetry.addData("Status:", "Close Gripper");
-//                    rightClaw.setPosition(CLAW_CLOSE);
-//                } else if ((rightClaw.getPosition() == CLAW_CLOSE)) {
-//                    telemetry.addData("Status:", "Open Gripper");
-//                    rightClaw.setPosition(CLAW_OPEN);
-//                }
-//
-////                wait(10);
-//            }
-//            telemetry.update();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    }}
